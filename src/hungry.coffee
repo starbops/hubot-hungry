@@ -36,13 +36,24 @@ module.exports = (robot) ->
       robot.brain.set 'restaurants', restaurants
       res.reply "\"#{name}\" deleted!"
     else
-      res.reply "no such restaurant."
+      res.reply 'No such restaurant.'
 
   robot.respond /restaurant list/i, (res) ->
     restaurants = robot.brain.get('restaurants') or {}
     all = for name, obj of restaurants
       "#{name}"
     res.reply all.join('\n')
+
+  robot.respond /restaurant show (.*)/i, (res) ->
+    restaurants = robot.brain.get('restaurants') or {}
+    restaurant = restaurants[res.match[1]]
+    if not restaurant
+      res.reply 'No such restaurant.'
+    else
+      name = restaurant.name
+      addr = restaurant.addr
+      tel = restaurant.tel
+      res.reply "Here it is!\nName: #{name}\nAddress: #{addr}\nTelephone No.: #{tel}"
 
   fetchRandom = (obj) ->
     keys = for temp_key of obj
