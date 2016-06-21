@@ -12,16 +12,52 @@ describe 'hungry', ->
   afterEach ->
     @room.destroy()
 
-  it 'responds to hello', ->
-    @room.user.say('alice', '@hubot hello').then =>
+  it 'adds restaurant', ->
+    @room.user.say('cindy', '@hubot restaurant add Taco House').then =>
       expect(@room.messages).to.eql [
-        ['alice', '@hubot hello']
-        ['hubot', '@alice hello!']
+        ['cindy', '@hubot restaurant add Taco House']
+        ['hubot', '@cindy "Taco House" added!']
       ]
 
-  it 'hears orly', ->
-    @room.user.say('bob', 'just wanted to say orly').then =>
+  it 'deletes restaurant', ->
+    restaurants =
+      'McDonald\'s':
+        name: 'McDonald\'s'
+        addr: ''
+        tel: ''
+    @room.robot.brain.set 'restaurants', restaurants
+
+    @room.user.say('david', '@hubot restaurant del McDonald\'s').then =>
       expect(@room.messages).to.eql [
-        ['bob', 'just wanted to say orly']
-        ['hubot', 'yarly']
+        ['david', '@hubot restaurant del McDonald\'s']
+        ['hubot', '@david "McDonald\'s" deleted!']
       ]
+
+  it 'deletes no such restaurant', ->
+    @room.user.say('david', '@hubot restaurant del Pizza Hut').then =>
+      expect(@room.messages).to.eql [
+        ['david', '@hubot restaurant del Pizza Hut']
+        ['hubot', '@david no such restaurant.']
+      ]
+
+  it 'lists all restaurants', ->
+    restaurants =
+      'Taco House':
+        name: 'Taco House'
+        addr: ''
+        tel: ''
+      'McDonald\'s':
+        name: 'McDonald\'s'
+        addr: ''
+        tel: ''
+    @room.robot.brain.set 'restaurants', restaurants
+
+    @room.user.say('frank', '@hubot restaurant list').then =>
+      expect(@room.messages).to.eql [
+        ['frank', '@hubot restaurant list']
+        ['hubot', '@frank Taco House\nMcDonald\'s']
+      ]
+
+  it 'promotes restaurant', ->
+    @room.user.say('evan', '@hubot where to eat?').then =>
+      expect(@room.messages[1][1]).to.contain 'may be a good choice!'
