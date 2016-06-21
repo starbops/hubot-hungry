@@ -2,18 +2,18 @@
   "name": "hubot-hungry",
   "description": "A hubot script that tells you where to eat",
   "version": "0.0.0",
-  "author": "Zespre <starbops@zespre.com>",
+  "author": "Zespre Schmidt <starbops@zespre.com>",
   "license": "MIT",
 
   "keywords": "hubot, hubot-scripts",
 
   "repository": {
     "type": "git",
-    "url": "git://github.com/hubot-scripts/hubot-hungry.git"
+    "url": "git://github.com/starbops/hubot-hungry.git"
   },
 
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-hungry/issues"
+    "url": "https://github.com/starbops/hubot-hungry/issues"
   },
 
   "dependencies": {
