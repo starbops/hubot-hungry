@@ -33,7 +33,7 @@ describe 'hungry', ->
         ['hubot', '@david "McDonald\'s" deleted!']
       ]
 
-  it 'deletes no such restaurant', ->
+  it 'no restaurant to delete', ->
     @room.user.say('david', '@hubot restaurant del Pizza Hut').then =>
       expect(@room.messages).to.eql [
         ['david', '@hubot restaurant del Pizza Hut']
