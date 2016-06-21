@@ -5,7 +5,7 @@
 #   LIST_OF_ENV_VARS_TO_SET
 #
 # Commands:
-#   hubot restaurant add <name>, addr: <address>, tel: <telephone no.> - Let hubot memorize restaurant information
+#   hubot restaurant add <name>[, addr: <address>, tel: <telephone no.>] - Let hubot memorize restaurant information
 #   hubot restaurant del <name> - Let hubot forget restaurant information
 #   hubot restaurant list - Let hubot dump all restaurant names
 #   hubot restaurant show - Let hubot show restaurant detail information
@@ -20,7 +20,7 @@
 module.exports = (robot) ->
   restaurants = {}
 
-  robot.respond /restaurant add (.*), addr: (.*), tel: (.*)/i, (res) ->
+  robot.respond /restaurant add ([^,]*)(|, addr: (.*)|, tel: (.*))/i, (res) ->
     name = res.match[1]
     addr = res.match[2]
     tel = res.match[3]

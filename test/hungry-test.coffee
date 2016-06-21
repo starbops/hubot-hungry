@@ -19,6 +19,13 @@ describe 'hungry', ->
         ['hubot', '@cindy "Taco House" added!']
       ]
 
+  it 'adds restaurant with only name', ->
+    @room.user.say('cindy', '@hubot restaurant add Taco House').then =>
+      expect(@room.messages).to.eql [
+        ['cindy', '@hubot restaurant add Taco House']
+        ['hubot', '@cindy "Taco House" added!']
+      ]
+
   it 'deletes restaurant', ->
     restaurants =
       'McDonald\'s':
