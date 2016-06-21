@@ -52,12 +52,29 @@ describe 'hungry', ->
         tel: ''
     @room.robot.brain.set 'restaurants', restaurants
 
-    @room.user.say('frank', '@hubot restaurant list').then =>
+    @room.user.say('evan', '@hubot restaurant list').then =>
       expect(@room.messages).to.eql [
-        ['frank', '@hubot restaurant list']
-        ['hubot', '@frank Taco House\nMcDonald\'s']
+        ['evan', '@hubot restaurant list']
+        ['hubot', '@evan Taco House\nMcDonald\'s']
       ]
 
   it 'promotes restaurant', ->
-    @room.user.say('evan', '@hubot where to eat?').then =>
+    restaurants =
+      'Taco House':
+        name: 'Taco House'
+        addr: ''
+        tel: ''
+      'McDonald\'s':
+        name: 'McDonald\'s'
+        addr: ''
+        tel: ''
+    @room.robot.brain.set 'restaurants', restaurants
+    @room.user.say('frank', '@hubot where to eat?').then =>
       expect(@room.messages[1][1]).to.contain 'may be a good choice!'
+
+  it 'no restaurants to promote', ->
+    @room.user.say('frank', '@hubot where to eat?').then =>
+      expect(@room.messages).to.eql [
+        ['frank', '@hubot where to eat?']
+        ['hubot', '@frank Please add restaurants first.']
+      ]
