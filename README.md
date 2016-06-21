@@ -21,8 +21,14 @@ Then add **hubot-hungry** to your `external-scripts.json`:
 ## Sample Interaction
 
 ```
-user1>> hubot hello
-hubot>> hello!
+user1>> hubot restaurant add McDonald's
+hubot>> "McDonald's" added!
+user2>> hubot restaurant add Taco Bell
+hubot>> "Taco Bell" added!
+user3>> hubot where to eat?
+hubot>> "Taco Bell" may be a good choice!
+user3>> hubot restaurant del Taco Bell
+hubot>> "Taco Bell" deleted!
 ```
 
 ## NPM Module
