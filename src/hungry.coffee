@@ -5,10 +5,10 @@
 #   LIST_OF_ENV_VARS_TO_SET
 #
 # Commands:
-#   hubot restaurant add - Let hubot memorizes restaurant information>
-#   hubot restaurant del - Let hubot forgets restaurant information>
-#   hubot restaurant list - Let hubot dumps all restaurant names>
-#   hubot where to eat? - Let hubot suggests you a restaurant>
+#   hubot restaurant add <name>, addr: <address>, tel: <telephone no.> - Let hubot memorizes restaurant information
+#   hubot restaurant del <name> - Let hubot forgets restaurant information
+#   hubot restaurant list - Let hubot dumps all restaurant names
+#   hubot where to eat? - Let hubot suggests you a restaurant
 #
 # Notes:
 #   <optional notes required for the script>
@@ -19,9 +19,11 @@
 module.exports = (robot) ->
   restaurants = {}
 
-  robot.respond /restaurant add (.*)/i, (res) ->
+  robot.respond /restaurant add (.*), addr: (.*), tel: (.*)/i, (res) ->
     name = res.match[1]
-    restaurant = name: name, addr: '', tel: ''
+    addr = res.match[2]
+    tel = res.match[3]
+    restaurant = name: name, addr: addr, tel: tel
     restaurants[name] = restaurant
     robot.brain.set 'restaurants', restaurants
     res.reply "\"#{name}\" added!"

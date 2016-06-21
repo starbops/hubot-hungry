@@ -13,9 +13,9 @@ describe 'hungry', ->
     @room.destroy()
 
   it 'adds restaurant', ->
-    @room.user.say('cindy', '@hubot restaurant add Taco House').then =>
+    @room.user.say('cindy', '@hubot restaurant add Taco House, addr: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300, tel: +886 3 533 8050').then =>
       expect(@room.messages).to.eql [
-        ['cindy', '@hubot restaurant add Taco House']
+        ['cindy', '@hubot restaurant add Taco House, addr: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300, tel: +886 3 533 8050']
         ['hubot', '@cindy "Taco House" added!']
       ]
 
