@@ -5,10 +5,11 @@
 #   LIST_OF_ENV_VARS_TO_SET
 #
 # Commands:
-#   hubot restaurant add <name>[, addr: <address>, tel: <telephone no.>] - Let hubot memorize restaurant information
+#   hubot restaurant add <name>[; addr: <address>; | tel: <telephone no.>] - Let hubot memorize restaurant information
 #   hubot restaurant del <name> - Let hubot forget restaurant information
 #   hubot restaurant list - Let hubot dump all restaurant names
 #   hubot restaurant show - Let hubot show restaurant detail information
+#   hubot restaurant update <name>[; addr: <address>; | tel: <telephone no.>] - Let hubot update restaurant detail information
 #   hubot where to eat? - Let hubot suggest you a restaurant
 #
 # Notes:

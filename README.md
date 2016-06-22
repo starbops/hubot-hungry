@@ -21,7 +21,7 @@ Then add **hubot-hungry** to your `external-scripts.json`:
 ## Sample Interaction
 
 ```
-user1>> hubot restaurant add McDonald's, addr: No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302, tel: +886 3 668 5501
+user1>> hubot restaurant add McDonald's; addr: No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5500
 hubot>> "McDonald's" added!
 
 user2>> hubot restaurant add Taco Bell
@@ -35,6 +35,12 @@ hubot>> "Taco Bell" deleted!
 
 user4>> hubot restaurant show McDonald's
 hubot>> Here it is!
+Name: McDonald's
+Address: No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302
+Telephone No.: +886 3 668 5500
+
+user5>> hubot restaurant update McDonald's; tel: +886 3 668 5501
+hubot>> Updated!
 Name: McDonald's
 Address: No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302
 Telephone No.: +886 3 668 5501
