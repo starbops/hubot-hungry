@@ -1,7 +1,7 @@
 {
   "name": "hubot-hungry",
   "description": "A hubot script that tells you where to eat",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Zespre Schmidt <starbops@zespre.com>",
   "license": "MIT",
   "keywords": "hubot, hubot-scripts",
