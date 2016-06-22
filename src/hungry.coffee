@@ -20,10 +20,10 @@
 module.exports = (robot) ->
   restaurants = {}
 
-  robot.respond /restaurant add ([^,]*)(|, addr: (.*)|, tel: (.*))/i, (res) ->
+  robot.respond /restaurant add ([^;]*)(; addr: ([^;]*))?(; tel: ([^;]*))?/i, (res) ->
     name = res.match[1]
-    addr = res.match[2]
-    tel = res.match[3]
+    addr = res.match[3]
+    tel = res.match[4]
     restaurant = name: name, addr: addr, tel: tel
     restaurants[name] = restaurant
     robot.brain.set 'restaurants', restaurants
@@ -51,10 +51,30 @@ module.exports = (robot) ->
     if not restaurant
       res.reply 'No such restaurant.'
     else
-      name = restaurant.name
-      addr = restaurant.addr
-      tel = restaurant.tel
-      res.reply "Here it is!\nName: #{name}\nAddress: #{addr}\nTelephone No.: #{tel}"
+      res.reply """
+                Here it is!
+                Name: #{restaurant.name}
+                Address: #{restaurant.addr}
+                Telephone No.: #{restaurant.tel}
+                """
+
+  robot.respond /restaurant update ([^;]*)(; addr: ([^;]*))?(; tel: ([^;]*))?/i, (res) ->
+    restaurants = robot.brain.get('restaurants') or {}
+    restaurant = restaurants[res.match[1]]
+    if not restaurant
+      res.reply 'No such restaurant.'
+    else
+      if res.match[3]
+        restaurant.addr = res.match[3]
+      if res.match[5]
+        restaurant.tel = res.match[5]
+      robot.brain.set 'restaurants', restaurants
+      res.reply """
+                Updated!
+                Name: #{restaurant.name}
+                Address: #{restaurant.addr}
+                Telephone No.: #{restaurant.tel}
+                """
 
   fetchRandom = (obj) ->
     keys = for temp_key of obj
@@ -67,5 +87,4 @@ module.exports = (robot) ->
       res.reply "Please add restaurants first."
     else
       restaurant = fetchRandom restaurants
-      name = restaurant.name
-      res.reply "\"#{name}\" may be a good choice!"
+      res.reply "\"#{restaurant.name}\" may be a good choice!"
