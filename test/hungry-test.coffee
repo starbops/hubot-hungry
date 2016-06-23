@@ -12,128 +12,184 @@ describe 'hungry', ->
   afterEach ->
     @room.destroy()
 
-  it 'adds restaurant', ->
-    @room.user.say('cindy', '@hubot restaurant add Taco House; addr: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300; tel: +886 3 533 8050').then =>
+
+  context 'adds restaurant with full information', ->
+    beforeEach ->
+      @room.user.say('cindy', '@hubot restaurant add Taco House; addr: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300; tel: +886 3 533 8050')
+
+    it 'should memorize full information of the restaurant', ->
+      expect(@room.robot.brain.get 'restaurants').to.eql
+        'Taco House':
+          'name': 'Taco House'
+          'addr': 'No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300'
+          'tel': '+886 3 533 8050'
+
+    it 'should reply to user of completion', ->
       expect(@room.messages).to.eql [
         ['cindy', '@hubot restaurant add Taco House; addr: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300; tel: +886 3 533 8050']
         ['hubot', '@cindy "Taco House" added!']
       ]
 
-  it 'adds restaurant with only name', ->
-    @room.user.say('cindy', '@hubot restaurant add Taco House').then =>
+
+  context 'adds restaurant with only name', ->
+    beforeEach ->
+      @room.user.say('cindy', '@hubot restaurant add Taco House')
+
+    it 'should memorize name of the restaurant', ->
+      expect(@room.robot.brain.get 'restaurants').to.eql
+        'Taco House':
+          'name': 'Taco House'
+          'addr': undefined
+          'tel': undefined
+
+    it 'should reply to user of completion', ->
       expect(@room.messages).to.eql [
         ['cindy', '@hubot restaurant add Taco House']
         ['hubot', '@cindy "Taco House" added!']
       ]
 
-  it 'deletes restaurant', ->
-    restaurants =
-      'McDonald\'s':
-        name: 'McDonald\'s'
-        addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
-        tel: '+886 3 668 5501'
-    @room.robot.brain.set 'restaurants', restaurants
 
-    @room.user.say('david', '@hubot restaurant del McDonald\'s').then =>
-      expect(@room.messages).to.eql [
-        ['david', '@hubot restaurant del McDonald\'s']
-        ['hubot', '@david "McDonald\'s" deleted!']
-      ]
+  context 'deletes restaurant', ->
+    beforeEach ->
+      restaurants =
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+      @room.robot.brain.set 'restaurants', restaurants
 
-  it 'no restaurant to delete', ->
-    @room.user.say('david', '@hubot restaurant del Pizza Hut').then =>
-      expect(@room.messages).to.eql [
-        ['david', '@hubot restaurant del Pizza Hut']
-        ['hubot', '@david No such restaurant.']
-      ]
+    it 'should forget all information of the restaurant', ->
+      @room.user.say('david', '@hubot restaurant del McDonald\'s').then =>
+        expect(@room.robot.brain.get 'restaurants').to.eql {}
 
-  it 'lists all restaurants', ->
-    restaurants =
-      'Taco House':
-        name: 'Taco House'
-        addr: 'No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300'
-        tel: '+886 3 533 8050'
-      'McDonald\'s':
-        name: 'McDonald\'s'
-        addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
-        tel: '+886 3 668 5501'
-    @room.robot.brain.set 'restaurants', restaurants
+    it 'should reply to user of completion', ->
+      @room.user.say('david', '@hubot restaurant del McDonald\'s').then =>
+        expect(@room.messages).to.eql [
+          ['david', '@hubot restaurant del McDonald\'s']
+          ['hubot', '@david "McDonald\'s" deleted!']
+        ]
 
-    @room.user.say('evan', '@hubot restaurant list').then =>
-      expect(@room.messages).to.eql [
-        ['evan', '@hubot restaurant list']
-        ['hubot', '@evan Taco House\nMcDonald\'s']
-      ]
+    it 'should complain about no such restaurant', ->
+      @room.user.say('david', '@hubot restaurant del Pizza Hut').then =>
+        expect(@room.messages).to.eql [
+          ['david', '@hubot restaurant del Pizza Hut']
+          ['hubot', '@david No such restaurant.']
+        ]
 
-  it 'show restaurant details', ->
-    restaurants =
-      'Taco House':
-        name: 'Taco House'
-        addr: 'No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300'
-        tel: '+886 3 533 8050'
-    @room.robot.brain.set 'restaurants', restaurants
+  context 'two restaurants information already saved', ->
+    beforeEach ->
+      restaurants =
+        'Taco House':
+          name: 'Taco House'
+          addr: 'No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300'
+          tel: '+886 3 533 8050'
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+      @room.robot.brain.set 'restaurants', restaurants
 
-    @room.user.say('frank', '@hubot restaurant show Taco House').then =>
-      expect(@room.messages).to.eql [
-        ['frank', '@hubot restaurant show Taco House']
-        ['hubot', '@frank Here it is!\nName: Taco House\nAddress: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300\nTelephone No.: +886 3 533 8050']
-      ]
+    it 'should list all names of restaurants', ->
+      @room.user.say('evan', '@hubot restaurant list').then =>
+        expect(@room.messages).to.eql [
+          ['evan', '@hubot restaurant list']
+          ['hubot', '@evan Taco House\nMcDonald\'s']
+        ]
 
-  it 'no restaurant details to show', ->
-    @room.user.say('frank', '@hubot restaurant show McDonald\'s').then =>
-      expect(@room.messages).to.eql [
-        ['frank', '@hubot restaurant show McDonald\'s']
-        ['hubot', '@frank No such restaurant.']
-      ]
+    it 'given name show restaurant details', ->
+      @room.user.say('frank', '@hubot restaurant show Taco House').then =>
+        expect(@room.messages).to.eql [
+          ['frank', '@hubot restaurant show Taco House']
+          ['hubot', '@frank Here it is!\nName: Taco House\nAddress: No. 13, Lane 2, Sanmin Rd, East District, Hsinchu City, Taiwan 300\nTelephone No.: +886 3 533 8050']
+        ]
 
-  it 'update restaurant address', ->
-    restaurants =
-      'McDonald\'s':
-        name: 'McDonald\'s'
-        addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
-        tel: '+886 3 668 5501'
-    @room.robot.brain.set 'restaurants', restaurants
+    it 'no restaurant details to show', ->
+      @room.user.say('frank', '@hubot restaurant show KFC').then =>
+        expect(@room.messages).to.eql [
+          ['frank', '@hubot restaurant show KFC']
+          ['hubot', '@frank No such restaurant.']
+        ]
 
-    @room.user.say('garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302').then =>
+
+  context 'address typo in restaurant information which need to be updated', ->
+    beforeEach ->
+      restaurants =
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+      @room.robot.brain.set 'restaurants', restaurants
+      @room.user.say('garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302')
+
+    it 'should update address and keep telphone number untouched', ->
+      expect(@room.robot.brain.get 'restaurants').to.eql
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+
+    it 'should reply to user of completion along with full information', ->
       expect(@room.messages).to.eql [
         ['garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302']
         ['hubot', '@garen Updated!\nName: McDonald\'s\nAddress: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302\nTelephone No.: +886 3 668 5501']
       ]
 
-  it 'update restaurant telephone no.', ->
-    restaurants =
-      'McDonald\'s':
-        name: 'McDonald\'s'
-        addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
-        tel: '+886 3 668 5501'
-    @room.robot.brain.set 'restaurants', restaurants
 
-    @room.user.say('garen', '@hubot restaurant update McDonald\'s; tel: +886 3 668 5502').then =>
+  context 'telephone number typo in restaurant information which need to be updated', ->
+    beforeEach ->
+      restaurants =
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+      @room.robot.brain.set 'restaurants', restaurants
+      @room.user.say('garen', '@hubot restaurant update McDonald\'s; tel: +886 3 668 5502')
+
+    it 'should update telephone number and keep address untouched', ->
+      expect(@room.robot.brain.get 'restaurants').to.eql
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5502'
+
+    it 'should reply to user of completion along with full information', ->
       expect(@room.messages).to.eql [
         ['garen', '@hubot restaurant update McDonald\'s; tel: +886 3 668 5502']
         ['hubot', '@garen Updated!\nName: McDonald\'s\nAddress: No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302\nTelephone No.: +886 3 668 5502']
       ]
 
-  it 'update restaurant address and telephone no.', ->
-    restaurants =
-      'McDonald\'s':
-        name: 'McDonald\'s'
-        addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
-        tel: '+886 3 668 5501'
-    @room.robot.brain.set 'restaurants', restaurants
 
-    @room.user.say('garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5502').then =>
-      expect(@room.messages).to.eql [
-        ['garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5502']
-        ['hubot', '@garen Updated!\nName: McDonald\'s\nAddress: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302\nTelephone No.: +886 3 668 5502']
-      ]
+  context 'both address and telephone number type in restaurant information which need to be updated', ->
+    beforeEach ->
+      restaurants =
+        'McDonald\'s':
+          name: 'McDonald\'s'
+          addr: 'No. 350, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+          tel: '+886 3 668 5501'
+      @room.robot.brain.set 'restaurants', restaurants
 
-  it 'no restaurant to update', ->
-    @room.user.say('garen', '@hubot restaurant update McDonald\'s, addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302, tel: +886 3 668 5502').then =>
-      expect(@room.messages).to.eql [
-        ['garen', '@hubot restaurant update McDonald\'s, addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302, tel: +886 3 668 5502']
-        ['hubot', '@garen No such restaurant.']
-      ]
+    it 'should update both address and telephone number', ->
+      @room.user.say('garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5502').then =>
+        expect(@room.robot.brain.get 'restaurants').to.eql
+          'McDonald\'s':
+            name: 'McDonald\'s'
+            addr: 'No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302'
+            tel: '+886 3 668 5502'
+
+    it 'should reply to user of completion along with full information', ->
+      @room.user.say('garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5502').then =>
+        expect(@room.messages).to.eql [
+          ['garen', '@hubot restaurant update McDonald\'s; addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302; tel: +886 3 668 5502']
+          ['hubot', '@garen Updated!\nName: McDonald\'s\nAddress: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302\nTelephone No.: +886 3 668 5502']
+        ]
+
+    it 'should complain about no restaurant to update', ->
+      @room.user.say('garen', '@hubot restaurant update McDonalds, addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302, tel: +886 3 668 5502').then =>
+        expect(@room.messages).to.eql [
+          ['garen', '@hubot restaurant update McDonalds, addr: No. 351, Section 1, Wenxing Rd, Zhubei City, Hsinchu County, Taiwan 302, tel: +886 3 668 5502']
+          ['hubot', '@garen No such restaurant.']
+        ]
+
 
   it 'promotes restaurant', ->
     restaurants =
