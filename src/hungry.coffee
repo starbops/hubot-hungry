@@ -24,7 +24,7 @@ module.exports = (robot) ->
   robot.respond /restaurant add ([^;]*)(; addr: ([^;]*))?(; tel: ([^;]*))?/i, (res) ->
     name = res.match[1]
     addr = res.match[3]
-    tel = res.match[4]
+    tel = res.match[5]
     restaurant = name: name, addr: addr, tel: tel
     restaurants[name] = restaurant
     robot.brain.set 'restaurants', restaurants
