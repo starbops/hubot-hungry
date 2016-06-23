@@ -5,9 +5,14 @@ expect = chai.expect
 
 helper = new Helper('../src/hungry.coffee')
 
+class MockResponse extends Helper.Response
+  random: (items) ->
+    'Taco House'
+
+
 describe 'hungry', ->
   beforeEach ->
-    @room = helper.createRoom()
+    @room = helper.createRoom({'response': MockResponse})
 
   afterEach ->
     @room.destroy()
@@ -232,7 +237,10 @@ describe 'hungry', ->
     @room.robot.brain.set 'restaurants', restaurants
 
     @room.user.say('garen', '@hubot where to eat?').then =>
-      expect(@room.messages[1][1]).to.contain 'may be a good choice!'
+      expect(@room.messages).to.eql [
+        ['garen', '@hubot where to eat?']
+        ['hubot', '@garen Taco House may be a good choice!']
+      ]
 
   it 'no restaurants to promote', ->
     @room.user.say('garen', '@hubot where to eat?').then =>

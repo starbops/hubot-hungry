@@ -77,15 +77,11 @@ module.exports = (robot) ->
                 Telephone No.: #{restaurant.tel}
                 """
 
-  fetchRandom = (obj) ->
-    keys = for temp_key of obj
-      temp_key
-    obj[keys[Math.floor(Math.random() * keys.length)]]
-
   robot.respond /where to eat\??/i, (res) ->
     restaurants = robot.brain.get('restaurants') or {}
     if Object.keys(restaurants).length is 0
       res.reply "Please add restaurants first."
     else
-      restaurant = fetchRandom restaurants
-      res.reply "\"#{restaurant.name}\" may be a good choice!"
+      keys = for temp_key of restaurants
+        temp_key
+      res.reply(res.random(keys) + ' may be a good choice!')
